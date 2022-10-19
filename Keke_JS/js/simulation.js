@@ -6,6 +6,55 @@
 //////////////////////////////          BABA.JS          //////////////////////////////////
 
 // **** PROLOG ****
+/*axios({
+  method: "get",
+  url: url,
+  timeout: 8000, // waits max 7 sec
+})
+  .then((response) => {
+    //console.log(response);
+    //console.log(response.data.url);
+    //console.log(response.data);
+    steps = response.data.toString().split("\n");
+    console.log(steps);
+    var actions = [];
+    let count = 0;
+    for (let i = 0; i < steps.length; i++) {
+      if (steps[i].startsWith("move")) {
+        actions[count] = steps[i]
+          .substring(4, steps[i].indexOf("("))
+          .toLowerCase();
+        count += 1;
+      }
+    }
+    console.log(actions);*/
+
+/*var child = require("child_process").spawn("java", [
+  "-jar",
+  "prolog/baba.jar",
+  "",
+]);
+child.stdout.on("data", function (data) {
+  console.log(data.toString());
+});
+
+child.stderr.on("data", function (data) {
+  console.log(data.toString());
+});*/
+
+/*var level = 2;
+
+var exec = require("child_process").exec,
+  child;
+child = exec("java -jar baba.jar 5", function (error, stdout, stderr) {
+  console.log("stdout: " + stdout);
+  //console.log("stderr: " + stderr);
+  /*if (error !== null) {
+    console.log("exec error: " + error);
+  }
+});*/
+
+/*
 const pl = require("tau-prolog");
 require("tau-prolog/modules/lists.js")(pl);
 var session = pl.create();
@@ -31,6 +80,7 @@ fruit(apple). fruit(pear). fruit(banana).
 % fruits_in/2                                
 fruits_in(Xs, X) :- member(X, Xs), fruit(X).`;
 
+//const goal = `once(lvl_05(P)).`;
 const goal = `lvl_05(P).`;
 
 session.consult(program, {
@@ -49,8 +99,34 @@ session.consult("prolog/graphplan.pl", {
   error: function (err) {
     console.log(err);
   },
-});
+});*/
 
+/*session.consult("prolog/baba_v2.1.pl", {
+  success: function () {
+    console.log("baba ok");
+    // Query
+    session.query(goal, {
+      success: function (ans) {
+        // Answers
+        session.answer({
+          success: function (answer) {
+            console.log(answer);
+          },
+        });
+        //console.log(ans);
+      },
+      error: function (err) {
+        //Error parsing goal
+        //show(err);
+      },
+    });
+  },
+  error: function (err) {
+    console.log(err);
+  },
+});*/
+
+/*
 session.consult("prolog/baba_v2.1.pl", {
   success: function () {
     console.log("baba ok");
@@ -71,7 +147,7 @@ session.consult("prolog/baba_v2.1.pl", {
     console.log(err);
   },
 });
-
+*/
 /*// TEST
 // Consult
 session.consult(test, {

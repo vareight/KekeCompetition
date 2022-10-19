@@ -19,14 +19,13 @@
 %  Pierre Andrews and Suresh Manandhar Nov 2006
 %
 
-:- dynamic(no_op_count/1).
-:- dynamic(mutex_action/3).
-:- dynamic(mutex_condition/3).
+:- dynamic no_op_count/1.
+:- dynamic mutex_action/3.
+:- dynamic mutex_condition/3.
 
-:- dynamic(plan_graph_del/3).
-:- dynamic(plan_graph_add/3).
-:- dynamic(plan_graph_pre/3).
-test(ok).
+:- dynamic plan_graph_del/3.
+:- dynamic plan_graph_add/3.
+:- dynamic plan_graph_pre/3.
 
 plan(InitialState, FinalState, Domain, Plan):-
 	retractall(no_op_count(_)),
@@ -37,18 +36,16 @@ plan(InitialState, FinalState, Domain, Plan):-
 	retractall(plan_graph_add(_, _, _)),
 	retractall(plan_graph_pre(_, _, _)),
 
-	assertz(no_op_count(0)),
+	assert(no_op_count(0)),
 	add_initial_conditions(InitialState),
-	%write('test1'),
 	generate_graph_nodes(1, FinalState, FinalLevel, Domain),
-	%write('test2'),
-	find_plan(FinalLevel, FinalState, InitialState, [], PlanT), % si blocca qua dentro
+	find_plan(FinalLevel, FinalState, InitialState, [], PlanT),
 	remove_no_ops(PlanT, Plan),
-	nl, nl, write_plan(Plan), nl. % comment
+	nl, nl, write_plan(Plan). % uncomment here to see steps
 
 
 find_plan(0, CurrentState, InitialState, Plan, Plan):-
-	subset(InitialState, CurrentState). % questa è sbagliata, il predicato subset di swi-prolog funziona diversamente: swi-subset(Subset, Set) -> tau-subset(Set, Subset)
+	subset(CurrentState, InitialState).
 
 find_plan(N, CurrentState, InitialState, PrevActions, Plan):-
 	N > 0,
@@ -70,14 +67,14 @@ find_current_level_actions(N, CurrentState, CurActions, Actions, CurAdds):-
 	member(Pred, CurrentState),
 	choose_action_to_achieve_pred(N, Pred, Action),
 
-	\+( (member(OtherAction,CurActions), mutex_action(N, Action, OtherAction)) ),
+	not( (member(OtherAction,CurActions), mutex_action(N, Action, OtherAction)) ),
 
 	findall(Cond, plan_graph(N, add, Cond, Action), AddCondsL),
 	list_to_set(AddCondsL, AddConds),
 
 	%% Plan minimality (as described in the paper) is equivalent to redundancy check
 	%% There is no other action which has the same effect i.e. same add conditions
-	\+( (member(OtherAdds,CurAdds), subset(AddConds,OtherAdds), subset(OtherAdds,AddConds)) ), % dovrò invertire probabilmente: NO! ci sono già entrambi i casi
+	not( (member(OtherAdds,CurAdds), subset(AddConds,OtherAdds), subset(OtherAdds,AddConds)) ),
 
 	subtract(CurrentState, AddConds, CurrentStateMod),
 	find_current_level_actions(N, CurrentStateMod, [Action|CurActions], Actions, [AddConds|CurAdds]).
@@ -113,7 +110,7 @@ generate_graph_nodes( N, FinalState, N1, _Domain):-
 	%% Check if FinalState Conditions have been satisfied 
         %%    and no mutual exclusion conditions have been violated
 	get_nonmutex_addconds(FinalState, N1, []),
-	nl, write('Feasible Plan found at level '), write(N1), nl, % comment
+	%nl, write('Feasible Plan found at level '), write(N1), % uncomment here to see plan level
 	!.
 
 generate_graph_nodes(N, _, _, _Domain):-
@@ -129,19 +126,8 @@ generate_graph_nodes(N, _, _, Domain):-
 	NPrev is N-1,
 	get_nonmutex_addconds(PreConditions, NPrev, []),	
 	
-	deletes(Action, DelPreConditions, Domain),
-	%% Instantiation Check
-	( ground(DelPreConditions) 
-           -> true
-            ; ( 
-	        nl, 
-		write('Action not fully instantiated '), write(Action),
-		nl,
-		write('Del Conditions: '), write(DelPreConditions), nl
-	    )
-	),
+	% inverto deletes con adds
 
-	
 	adds(Action, AddConditions, _, Domain),
 	%% Instantiation Check
 	( ground(AddConditions) 
@@ -154,6 +140,18 @@ generate_graph_nodes(N, _, _, Domain):-
 	    )
 	),
 
+
+	deletes(Action, DelPreConditions, Domain),
+	%% Instantiation Check
+	( ground(DelPreConditions) 
+           -> true
+            ; ( 
+	        nl, 
+		write('Action not fully instantiated '), write(Action),
+		nl,
+		write('Del Conditions: '), write(DelPreConditions), nl
+	    )
+	),
 
 	add_graph_nodes(PreConditions, Action, N, pre),
 
@@ -184,7 +182,7 @@ get_nonmutex_addconds([Pred|Conditions], N, PrePreds):-
 	
 check_mutex([], _, _).
 check_mutex([OtherPred|Others], Pred, N):-
-	\+(mutex_condition(N, Pred, OtherPred)),
+	not(mutex_condition(N, Pred, OtherPred)),
 	check_mutex(Others, Pred, N).
 
 
@@ -218,12 +216,12 @@ mutex_add_add_conflict(N):-
 
 	Action1 \= Action2,
 	Pred1 \= Pred2,
-	\+(mutex_condition(N, Pred1, Pred2)),
-	\+( (
+	not(mutex_condition(N, Pred1, Pred2)),
+	not( (
 	       plan_graph(N, add, Pred1, Action11),
 	       plan_graph(N, add, Pred2, Action22),
 	       Action11 \= Action22,
-	       \+(mutex_action(N, Action11, Action22))
+	       not(mutex_action(N, Action11, Action22))
 	      )
            ),
 	add_to_db(mutex_condition(N, Pred1, Pred2)),
@@ -257,17 +255,17 @@ add_plan_graph(N, del, Pred, Action):-
 	plan_graph_del(N, Pred, Action),
 	!.
 add_plan_graph(N, del, Pred, Action):-
-	assertz(plan_graph_del(N, Pred, Action)).
+	assert(plan_graph_del(N, Pred, Action)).
 add_plan_graph(N, pre, Pred, Action):-
 	plan_graph_pre(N, Pred, Action),
 	!.
 add_plan_graph(N, pre, Pred, Action):-
-	assertz(plan_graph_pre(N, Pred, Action)).
+	assert(plan_graph_pre(N, Pred, Action)).
 add_plan_graph(N, add, Pred, Action):-
 	plan_graph_add(N, Pred, Action),
 	!.
 add_plan_graph(N, add, Pred, Action):-
-	assertz(plan_graph_add(N, Pred, Action)).
+	assert(plan_graph_add(N, Pred, Action)).
 
 
 
@@ -286,7 +284,7 @@ add_no_op_nodes(_).
 
 
 add_no_op_node(Pred, N):-
-	\+((plan_graph(N, add, Pred, no_op(C)), plan_graph(N, pre, Pred, no_op(C)))),
+	not((plan_graph(N, add, Pred, no_op(C)), plan_graph(N, pre, Pred, no_op(C)))),
 	new_no_op_count(Count),
 	add_plan_graph(N, add, Pred, no_op(Count)),
 	add_plan_graph(N, pre, Pred, no_op(Count)).
@@ -296,7 +294,7 @@ add_no_op_node(Pred, N):-
 new_no_op_count(N):-
 	retract(no_op_count(N)),
 	N1 is N+1,
-	assertz(no_op_count(N1)).
+	assert(no_op_count(N1)).
 
 
 
@@ -304,21 +302,21 @@ add_to_db(Clause):-
 	call(Clause),
 	!.
 add_to_db(Clause):-
-	assertz(Clause).
+	assert(Clause).
 
 
 write_plan(Plan):- write_plan(Plan,1). 
 
 write_plan([], _):- nl.
 write_plan([Actions|Rest], N):-
-	nl, write('Step '), write(N), write(:), nl,
+	%write('Step '), write(N), write(:), % nl here
 	write_list(Actions),
 	N1 is N+1,
 	write_plan(Rest, N1).
 	
 write_list([]).
 write_list([no_op(_)|L]):- !, write_list(L).
-write_list([X|L]):-  write('        '), write(X), nl, write_list(L).
+write_list([X|L]):- write(X), nl, write_list(L). % deleted write('        '),
 
 remove_no_ops([],[]).
 remove_no_ops([no_op(_)|L],R):-
@@ -329,21 +327,3 @@ remove_no_ops([X|L],[X1|R]):-
 	remove_no_ops(X,X1),
 	remove_no_ops(L,R).
 remove_no_ops(X,X).
-
-% I NEED SUBTRACT, IT'S NOT INCLUDED IN THE TAU-PROLOG INTERPRETER
-memberchk(X,[X|_]) :- !.
-memberchk(X,[_|T]):- memberchk(X,T).
-subtract([], _, []).
-subtract([Head|Tail], L2, L3) :-
-                memberchk(Head, L2),
-                !,
-                subtract(Tail, L2, L3).
-subtract([Head|Tail1], L2, [Head|Tail3]) :-
-                subtract(Tail1, L2, Tail3).
-
-% ALSO SUBSET (not sure this implementation is fine)
-subset([], []).
-subset([E|Tail], [E|NTail]):-
-  subset(Tail, NTail).
-subset([_|Tail], NTail):-
-  subset(Tail, NTail).

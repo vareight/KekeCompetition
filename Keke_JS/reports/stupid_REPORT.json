@@ -3,102 +3,131 @@
     "levelSet": "demo_LEVELS",
     "levels": [
       {
-        "id": 1,
-        "iterations": 22,
-        "time": 0.077,
-        "solution": "rrrrr",
-        "won_level": true
-      },
-      {
         "id": 2,
-        "iterations": 273,
-        "time": 0.366,
-        "solution": "rrrruuurddd",
-        "won_level": true
-      },
-      {
-        "id": 3,
-        "iterations": 3470,
-        "time": 10.001,
-        "solution": "uullurlddldrd",
-        "won_level": false
-      },
-      {
-        "id": 4,
-        "iterations": 33,
-        "time": 0.099,
-        "solution": "lllll",
-        "won_level": true
-      },
-      {
-        "id": 5,
-        "iterations": 1062,
-        "time": 1.262,
-        "solution": "rddrrurddruuu",
-        "won_level": true
-      },
-      {
-        "id": 6,
-        "iterations": 504,
-        "time": 0.607,
-        "solution": "rrddrrruu",
-        "won_level": true
-      },
-      {
-        "id": 7,
-        "iterations": 5,
-        "time": 0.004,
-        "solution": "rururu",
-        "won_level": true
-      },
-      {
-        "id": 8,
-        "iterations": 10000,
-        "time": 0.003,
+        "iterations": 0,
+        "time": 24.862,
         "solution": "",
         "won_level": false
       },
       {
-        "id": 9,
-        "iterations": 324,
-        "time": 0.368,
-        "solution": "ulllrrruuu",
+        "id": 1,
+        "iterations": 0,
+        "time": 0.099,
+        "solution": "rrrrr",
         "won_level": true
+      },
+      {
+        "id": 3,
+        "iterations": 0,
+        "time": 0.107,
+        "solution": "rrrrr",
+        "won_level": false
+      },
+      {
+        "id": 4,
+        "iterations": 0,
+        "time": 0.087,
+        "solution": "rrrrr",
+        "won_level": false
+      },
+      {
+        "id": 5,
+        "iterations": 0,
+        "time": 0.089,
+        "solution": "rrrrr",
+        "won_level": false
+      },
+      {
+        "id": 6,
+        "iterations": 0,
+        "time": 0.1,
+        "solution": "rrrrr",
+        "won_level": false
+      },
+      {
+        "id": 7,
+        "iterations": 0,
+        "time": 0.117,
+        "solution": "rrrrr",
+        "won_level": false
+      },
+      {
+        "id": 8,
+        "iterations": 0,
+        "time": 0.123,
+        "solution": "rrrrr",
+        "won_level": true
+      },
+      {
+        "id": 9,
+        "iterations": 0,
+        "time": 0.138,
+        "solution": "rrrrr",
+        "won_level": false
       },
       {
         "id": 10,
-        "iterations": 132,
-        "time": 0.138,
-        "solution": "ruurrrdd",
-        "won_level": true
+        "iterations": 0,
+        "time": 0.103,
+        "solution": "rrrrr",
+        "won_level": false
       },
       {
         "id": 11,
-        "iterations": 214,
-        "time": 0.427,
-        "solution": "ddddrrrurrduuuuu",
-        "won_level": true
+        "iterations": 0,
+        "time": 0.1,
+        "solution": "rrrrr",
+        "won_level": false
       },
       {
         "id": 12,
-        "iterations": 143,
-        "time": 0.276,
-        "solution": "ddddrrrrrrudllurdruuuuul",
-        "won_level": true
+        "iterations": 0,
+        "time": 0.104,
+        "solution": "rrrrr",
+        "won_level": false
       },
       {
         "id": 13,
-        "iterations": 369,
-        "time": 0.48,
-        "solution": "rruuulull",
-        "won_level": true
+        "iterations": 0,
+        "time": 0.128,
+        "solution": "rrrrr",
+        "won_level": false
       },
       {
         "id": 14,
-        "iterations": 227,
-        "time": 0.221,
-        "solution": "llllulddrrr",
-        "won_level": true
+        "iterations": 0,
+        "time": 0.108,
+        "solution": "rrrrr",
+        "won_level": false
+      }
+    ]
+  },
+  {
+    "levelSet": "test_LEVELS",
+    "levels": [
+      {
+        "id": 0
+      },
+      {
+        "id": 1
+      },
+      {
+        "id": 2
+      },
+      {
+        "id": 3
+      }
+    ]
+  },
+  {
+    "levelSet": "easy_LEVELS",
+    "levels": [
+      {
+        "id": 1,
+        "iterations": 0,
+        "time": 5000,
+        "solution": "",
+        "won_level": false
       }
     ]
   }
