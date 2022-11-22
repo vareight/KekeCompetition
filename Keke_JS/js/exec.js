@@ -192,7 +192,7 @@ async function executeLevel(ls, ln, iter, agent = "default") {
   //solve level
   //let r = run_keke(lvl.ascii, iter);
   let r =
-    agent == "stupid"
+    agent == "prolog"
       ? await run_keke_graphplan(lvl.ascii, iter, ln)
       : run_keke(lvl.ascii, iter);
   let solution = r.s;

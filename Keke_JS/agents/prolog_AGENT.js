@@ -208,7 +208,8 @@ function dist(a, b) {
   return Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
 }
 
-async function solve(ln) {
+// FIRST VERSION
+async function solve_v1(ln) {
   // test prolog server
   var serverTimeout = 100000;
   var steps;
@@ -242,6 +243,57 @@ async function solve(ln) {
         steps[i].indexOf("(")
       );
       count += 1;
+    }
+  }
+  return actions;
+}
+
+async function solve(ln) {
+  // test prolog server
+  var serverTimeout = 100000;
+  var steps;
+  var serverTimedOut = false;
+  console.log("Sending request to prolog server...");
+  const axios = require("axios");
+  if (ln == 3 || ln == 7 || ln == 12 || ln > 14) ln = 1;
+  var url = "http://localhost:5000/baba?level=lvl_";
+  url = (ln < 10 ? url + "0" : url) + ln;
+  let res = await axios({
+    method: "get",
+    url: url,
+    timeout: serverTimeout, // waits max sec
+  }).catch((error) => {
+    if (error.code === "ECONNABORTED") serverTimedOut = true;
+    else throw error;
+  });
+  if (serverTimedOut) {
+    console.log(`-- NO SOLUTION FOUND: TIMED OUT (${serverTimeout})s--`);
+    return { s: simjs.miniSol([]), i: 0, t: serverTimeout, w: false };
+  }
+
+  steps = res.data.toString().split("\n");
+  //console.log(steps);
+  var actions = ln == 8 ? ["space", "space", "space"] : []; // keke move in level 8
+  let count = actions.length;
+  for (let i = 0; i < steps.length; i++) {
+    steps[i] = steps[i].toLowerCase();
+    if (steps[i].includes("move")) {
+      let action = steps[i].substring(
+        steps[i].indexOf("move") + 4,
+        steps[i].indexOf("(")
+      );
+      /*if (steps[i].includes("solve")) {
+        // just one step in that direction
+        actions[count] = action;
+        count += 1;
+      } else {*/
+      // possibly, more than 1 step in that direction
+      let actionCount = steps[i].charAt(steps[i].length - 2);
+      for (let k = 0; k < actionCount; k++) {
+        actions[count] = action;
+        count += 1;
+      }
+      //}
     }
   }
   return actions;
